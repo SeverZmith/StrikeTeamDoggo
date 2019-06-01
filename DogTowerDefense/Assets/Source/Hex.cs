@@ -12,8 +12,9 @@ public class Hex
     /******************
      * Constructor(s) *
      ******************/
-    public Hex(int q, int r, float radius)
+    public Hex(Hexmap hexmap, int q, int r, float radius)
     {
+        this.Hexmap = hexmap;
         // since:       q + r + s = 0
         // therefore:   s = -(q + r)
         this.q = q;
@@ -26,15 +27,19 @@ public class Hex
     /********************
      * Member Variables *
      ********************/
+    public readonly Hexmap Hexmap = null;
     public readonly int q = 0; // col
     public readonly int r = 0; // row
     public readonly int s = 0;
     public readonly float radius = 0;
+    public List<Hex> Neighbors = new List<Hex>();
+    public GameObject HexObject { get; set; }
 
     // TODO: change to enum
     public int tileTypeIndex = -1; // -1: undefined, 0: terrain, 1: grass
 
     private static readonly float WIDTH_MULTIPLIER = Mathf.Sqrt(3) / 2;
+    private List<Unit> units = null;
 
 
     /******************
@@ -110,4 +115,37 @@ public class Hex
         // See 'Distances' section under cube coordinates on redblobgames' hexagons article
         return Mathf.Max(Mathf.Abs(a.q - b.q), Mathf.Abs(a.r - b.r), Mathf.Abs(a.s - b.s));
     }
+
+    public void AddUnit(Unit unit)
+    {
+        if (units == null)
+        {
+            units = new List<Unit>();
+        }
+
+        units.Add(unit);
+    }
+
+    public void RemoveUnit(Unit unit)
+    {
+        if (units != null)
+        {
+            units.Remove(unit);
+        }
+    }
+
+    public Unit[] GetUnits()
+    {
+        return units.ToArray();
+    }
+
+    public void AddNeighbor(Hex neighbor)
+    {
+        Neighbors.Add(neighbor);
+    }
+
+    //public void SetHexObj(GameObject hexObj) // TODO: verify remove
+    //{
+    //    HexObj = hexObj;
+    //}
 }
