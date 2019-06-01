@@ -47,9 +47,9 @@ MonoBehaviour:
     type: 3}
   enemyPrefab: {fileID: 5092842508931278513, guid: 1be59330c789dd34a93d69cc7e229862,
     type: 3}
-  terrainMesh: {fileID: 2534964839176971238, guid: 06f38a534113b604598f38f794dd7dce,
+  terrainMesh: {fileID: 2534964839176971238, guid: 31a70d72e200c97458d22472bcf9dd48,
     type: 3}
-  grassMesh: {fileID: 2534964839176971238, guid: 06f38a534113b604598f38f794dd7dce,
+  grassMesh: {fileID: 2534964839176971238, guid: 31a70d72e200c97458d22472bcf9dd48,
     type: 3}
   terrainMat: {fileID: 2100000, guid: d96297edfa7902a4f950f19c76d7a9f2, type: 2}
   grassMat: {fileID: 2100000, guid: c44afa94ed77048418c738d1b4baf5bc, type: 2}
