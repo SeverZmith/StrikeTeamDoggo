@@ -63,6 +63,7 @@ public class Hexmap : MonoBehaviour
     private Dictionary<Hex, GameObject> dictHexToGameObj = null;
     private List<Unit> units = null;
     private Dictionary<Unit, GameObject> dictUnitToGameObj = null;
+    List<Hex> SpawnPoints = new List<Hex>();
 
     [SerializeField] private int hexagonMapRadius = 8;
 
@@ -108,6 +109,16 @@ public class Hexmap : MonoBehaviour
                 meshRenderer.material = terrainMat;
 
                 HexList.Add(hex);
+
+                // Set Spawnpoints
+
+                if ((hex.q == hexagonMapRadius / 2 && (hex.r == -hexagonMapRadius || hex.r == hexagonMapRadius / 2))
+                    || (hex.q == -hexagonMapRadius / 2 && (hex.r == hexagonMapRadius || hex.r == -hexagonMapRadius / 2))
+                    || (hex.q == hexagonMapRadius && hex.r == -hexagonMapRadius / 2)
+                    || (hex.q == -hexagonMapRadius && hex.r == hexagonMapRadius / 2))
+                {
+                    SpawnPoints.Add(hex);
+                }
 
                 yIndex++;
             }
