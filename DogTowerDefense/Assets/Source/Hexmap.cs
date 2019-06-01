@@ -11,6 +11,11 @@ public class Hexmap : MonoBehaviour
     {
         GenerateTilemap();
         flowField(HexList[Random.Range(0, HexList.Count)]);
+        //flowField(GetHexAtCoord(8, 8));
+
+        // For testing unit spawning
+        Unit unit = new Unit();
+        SpawnUnitAtCoord(unit, enemyPrefab, 8, 8);
     }
 
     void Update() // TESTING (TODO: remove)
@@ -21,7 +26,7 @@ public class Hexmap : MonoBehaviour
             {
                 foreach (Unit unit in units)
                 {
-                    unit.StartMovement();
+                    unit.TriggerMovement();
                 }
             }
         }
@@ -58,8 +63,6 @@ public class Hexmap : MonoBehaviour
     private Dictionary<Hex, GameObject> dictHexToGameObj = null;
     private List<Unit> units = null;
     private Dictionary<Unit, GameObject> dictUnitToGameObj = null;
-    private int qCoord = 0;
-    private int rCoord = 0;
 
     [SerializeField] private int hexagonMapRadius = 8;
 
@@ -69,10 +72,10 @@ public class Hexmap : MonoBehaviour
      ******************/
     public virtual void GenerateTilemap()
     {
-        hexes = new Hex[(hexagonMapRadius * 2) + 1, 217];
+        hexes = new Hex[(hexagonMapRadius * 2) + 1, (hexagonMapRadius * ((hexagonMapRadius + 1) * 3)) + 1];
         dictHexToGameObj = new Dictionary<Hex, GameObject>();
-        qCoord = 0;
-        rCoord = 0;
+        int xIndex = 0;
+        int yIndex = 0;
 
         for (int q = hexagonMapRadius; q >= -hexagonMapRadius; q--)
         {
@@ -82,12 +85,14 @@ public class Hexmap : MonoBehaviour
             else
                 qSign = 1;
 
+            yIndex = 0;
+
             for (int r = hexagonMapRadius * qSign - q; r != hexagonMapRadius * -qSign - qSign; r -= qSign)
             {
                 Hex hex = new Hex(this, q, r, 1f);
                 hex.tileTypeIndex = -1;
 
-                hexes[qCoord, rCoord] = hex;
+                hexes[xIndex, yIndex] = hex;
 
                 // Instantiate hex tiles (parent transform to this Tilemap)
                 GameObject hexObj = Instantiate(hexPrefab, hex.GetWorldPosition(), Quaternion.identity, this.transform);
@@ -97,16 +102,16 @@ public class Hexmap : MonoBehaviour
                 //hex.SetHexObj(hexObj); // TODO: verify remove
 
                 // Shows hexes' coordinates relative to center hex
-                hexObj.GetComponentInChildren<TextMesh>().text = string.Format("({0}, {1})", qCoord, rCoord);
+                hexObj.GetComponentInChildren<TextMesh>().text = string.Format("({0}, {1})", xIndex, yIndex);
 
                 MeshRenderer meshRenderer = hexObj.GetComponentInChildren<MeshRenderer>();
                 meshRenderer.material = terrainMat;
 
                 HexList.Add(hex);
 
-                rCoord++;
+                yIndex++;
             }
-            qCoord++;
+            xIndex++;
         }
 
         // Check for and store neighbors in Hex
@@ -123,66 +128,9 @@ public class Hexmap : MonoBehaviour
             }
         }
 
-        // For testing unit spawning // TODO: extrapolate into helper function
-        Unit unit = new Unit();
-        SpawnUnitAtCoord(unit, enemyPrefab, 8, 108);
-
         // Static objects can be batched together to reduce the number of draw calls
         //StaticBatchingUtility.Combine(this.gameObject);
     }
-
-    //public virtual void GenerateTilemap_old()
-    //{
-    //    hexes = new Hex[hexCols, hexRows];
-    //    dictHexToGameObj = new Dictionary<Hex, GameObject>();
-
-    //    for (int col = 0; col < hexCols; col++)
-    //    {
-    //        for (int row = 0; row < hexRows; row++)
-    //        {
-    //            // Create new Hex w/ radius of 1f
-    //            Hex hex = new Hex(this, col, row, 1f);
-    //            hex.tileTypeIndex = -1;
-
-    //            // Assign created hex into spot in hexes array
-    //            hexes[col, row] = hex;
-
-    //            // Position hexes based on camera's position (this is essentially an early stage of world wrapping)
-    //            Vector3 hexPosition = hex.GetPositionRelativeToCamera(Camera.main.transform.position, hexRows, hexCols);
-
-    //            // Instantiate hex tiles (parent transform to this Tilemap)
-    //            GameObject hexObj = Instantiate(hexPrefab, hexPosition, Quaternion.identity, this.transform);
-
-    //            dictHexToGameObj[hex] = hexObj; // TODO: use add call instead?
-
-    //            // Show hex coordinate text
-    //            hexObj.GetComponentInChildren<TextMesh>().text = string.Format("({0}, {1})", col, row);
-
-    //            //hex.SetHexObj(hexObj); // TODO: verify remove
-    //            hex.HexObject = hexObj;
-    //            HexList.Add(hex);
-    //        }
-
-    //        // Check for and store neighbors in Hex
-    //        foreach (Hex hex in HexList)
-    //        {
-    //            foreach (Hex neighbor in HexList)
-    //            {
-    //                if ((neighbor.q == hex.q + 1 && (neighbor.r == hex.r || neighbor.r == hex.r - 1))
-    //                    || (neighbor.q == hex.q - 1 && (neighbor.r == hex.r || neighbor.r == hex.r + 1))
-    //                    || (neighbor.q == hex.q && (neighbor.r == hex.r - 1 || neighbor.r == hex.r + 1)))
-    //                {
-    //                    hex.AddNeighbor(neighbor);
-    //                }
-    //            }
-    //        }
-
-    //        UpdateTileType();
-
-    //        // Static objects can be batched together to reduce the number of draw calls
-    //        //StaticBatchingUtility.Combine(this.gameObject);
-    //    }
-    //}
 
     public Hex GetHexAtCoord(int q, int r)
     {
@@ -193,6 +141,11 @@ public class Hexmap : MonoBehaviour
         }
 
         return hexes[q, r];
+    }
+
+    public Vector3 GetHexPosition(Hex hex)
+    {
+        return hex.GetPositionRelativeToCamera(Camera.main.transform.position, (hexagonMapRadius * 2) + 1, (hexagonMapRadius * ((hexagonMapRadius + 1) * 3)) + 1);
     }
 
     public Hex[] GetHexesWithinRadius(Hex centerHex, int radius)
@@ -215,39 +168,6 @@ public class Hexmap : MonoBehaviour
 
         return hexesList.ToArray();
     }
-
-    //public void UpdateTileType()
-    //{
-    //    for (int col = 0; col < hexCols; col++)
-    //    {
-    //        for (int row = 0; row < hexRows; row++)
-    //        {
-    //            Hex hex = hexes[col, row];
-    //            GameObject hexObj = dictHexToGameObj[hex];
-
-    //            // Change hex material and mesh
-    //            MeshRenderer meshRenderer = hexObj.GetComponentInChildren<MeshRenderer>();
-    //            MeshFilter meshFilter = hexObj.GetComponentInChildren<MeshFilter>();
-    //            switch (hex.tileTypeIndex)
-    //            {
-    //                case 0:
-    //                    meshRenderer.material = terrainMat;
-    //                    meshFilter.mesh = terrainMesh;
-    //                    break;
-
-    //                case 1:
-    //                    meshRenderer.material = grassMat;
-    //                    meshFilter.mesh = grassMesh;
-    //                    break;
-
-    //                default:
-    //                    meshRenderer.material = terrainMat;
-    //                    meshFilter.mesh = terrainMesh;
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //}
 
     public void SpawnUnitAtCoord(Unit unitType, GameObject unitPrefab, int q, int r)
     {
@@ -316,4 +236,90 @@ public class Hexmap : MonoBehaviour
             hexDist.hexagon.HexObject.GetComponentInChildren<TextMesh>().text += string.Format("\n{0}", hexDist.dist);
         }
     }
+
+    //public virtual void GenerateTilemap_old()
+    //{
+    //    hexes = new Hex[hexCols, hexRows];
+    //    dictHexToGameObj = new Dictionary<Hex, GameObject>();
+
+    //    for (int col = 0; col < hexCols; col++)
+    //    {
+    //        for (int row = 0; row < hexRows; row++)
+    //        {
+    //            // Create new Hex w/ radius of 1f
+    //            Hex hex = new Hex(this, col, row, 1f);
+    //            hex.tileTypeIndex = -1;
+
+    //            // Assign created hex into spot in hexes array
+    //            hexes[col, row] = hex;
+
+    //            // Position hexes based on camera's position (this is essentially an early stage of world wrapping)
+    //            Vector3 hexPosition = hex.GetPositionRelativeToCamera(Camera.main.transform.position, hexRows, hexCols);
+
+    //            // Instantiate hex tiles (parent transform to this Tilemap)
+    //            GameObject hexObj = Instantiate(hexPrefab, hexPosition, Quaternion.identity, this.transform);
+
+    //            dictHexToGameObj[hex] = hexObj; // TODO: use add call instead?
+
+    //            // Show hex coordinate text
+    //            hexObj.GetComponentInChildren<TextMesh>().text = string.Format("({0}, {1})", col, row);
+
+    //            //hex.SetHexObj(hexObj); // TODO: verify remove
+    //            hex.HexObject = hexObj;
+    //            HexList.Add(hex);
+    //        }
+
+    //        // Check for and store neighbors in Hex
+    //        foreach (Hex hex in HexList)
+    //        {
+    //            foreach (Hex neighbor in HexList)
+    //            {
+    //                if ((neighbor.q == hex.q + 1 && (neighbor.r == hex.r || neighbor.r == hex.r - 1))
+    //                    || (neighbor.q == hex.q - 1 && (neighbor.r == hex.r || neighbor.r == hex.r + 1))
+    //                    || (neighbor.q == hex.q && (neighbor.r == hex.r - 1 || neighbor.r == hex.r + 1)))
+    //                {
+    //                    hex.AddNeighbor(neighbor);
+    //                }
+    //            }
+    //        }
+
+    //        UpdateTileType();
+
+    //        // Static objects can be batched together to reduce the number of draw calls
+    //        //StaticBatchingUtility.Combine(this.gameObject);
+    //    }
+    //}
+
+    //public void UpdateTileType()
+    //{
+    //    for (int col = 0; col < hexCols; col++)
+    //    {
+    //        for (int row = 0; row < hexRows; row++)
+    //        {
+    //            Hex hex = hexes[col, row];
+    //            GameObject hexObj = dictHexToGameObj[hex];
+
+    //            // Change hex material and mesh
+    //            MeshRenderer meshRenderer = hexObj.GetComponentInChildren<MeshRenderer>();
+    //            MeshFilter meshFilter = hexObj.GetComponentInChildren<MeshFilter>();
+    //            switch (hex.tileTypeIndex)
+    //            {
+    //                case 0:
+    //                    meshRenderer.material = terrainMat;
+    //                    meshFilter.mesh = terrainMesh;
+    //                    break;
+
+    //                case 1:
+    //                    meshRenderer.material = grassMat;
+    //                    meshFilter.mesh = grassMesh;
+    //                    break;
+
+    //                default:
+    //                    meshRenderer.material = terrainMat;
+    //                    meshFilter.mesh = terrainMesh;
+    //                    break;
+    //            }
+    //        }
+    //    }
+    //}
 }

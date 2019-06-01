@@ -27,7 +27,7 @@ public class Unit
         hex.AddUnit(this);
     }
 
-    public void StartMovement()
+    public void TriggerMovement()
     {
         Debug.Log("Moving");
     }
