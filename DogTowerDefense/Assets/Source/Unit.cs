@@ -2,14 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit
+public class Unit : MonoBehaviour
 {
+    /*******************
+     * Unity Functions *
+     *******************/
+    void Start()
+    {
+        prevPosition = transform.position;
+        nextPosition = transform.position;
+    }
+
+    void Update()
+    {
+        transform.position = Vector3.SmoothDamp(transform.position, nextPosition, ref velocity, 0.4f);
+        CalculatePath(OccupiedHex);
+    }
+
+
     /********************
      * Member Variables *
      ********************/
     public Hex OccupiedHex { get; protected set; }
-    public string name = "Unit-Name";
-    public int health = 100;
+    public string Name = "Unit-Name";
+    public int Health = 100;
+
+    private Vector3 prevPosition = Vector3.zero;
+    private Vector3 nextPosition = Vector3.zero;
+    private Vector3 velocity = Vector3.zero;
+    private List<Hex> pathToGoal = null;
+    private Objective currentObjective = null;
 
 
     /******************
@@ -27,8 +49,42 @@ public class Unit
         hex.AddUnit(this);
     }
 
+    public void SetCurrentObjective(Objective objective)
+    {
+        currentObjective = objective;
+    }
+
     public void TriggerMovement()
     {
         Debug.Log("Moving");
+
+        //Hex prevHex = OccupiedHex;
+        //Hex nextHex = OccupiedHex.Neighbors[0];
+
+        if (pathToGoal.Count > 0)
+        {
+            Hex nextHex = pathToGoal[0];
+            pathToGoal.RemoveAt(0);
+
+            float parentY = GetComponentInParent<Transform>().position.y;
+            nextPosition = nextHex.GetWorldPosition() + new Vector3(0, parentY, 0);
+
+            OccupiedHex = nextHex;
+        }
+
+        //transform.position = nextHex.GetWorldPosition();
+    }
+
+    public void CalculatePath(Hex startingHex)
+    {
+        pathToGoal = new List<Hex>();
+
+        for (int i = 0; i < startingHex.Neighbors.Count; i++)
+        {
+            if (startingHex.Neighbors[i].HexDistanceToObjective == startingHex.HexDistanceToObjective - 1)
+            {
+                pathToGoal.Add(startingHex.Neighbors[i]);
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7911623070466270687}
-  - component: {fileID: 7911623070466270686}
+  - component: {fileID: 1077564727742605909}
   m_Layer: 0
   m_Name: HexTilemap
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7911623070466270686
+--- !u!114 &1077564727742605909
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,12 +40,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7911623070466270685}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95856216bc533d24b9d009abdc7baed2, type: 3}
+  m_Script: {fileID: 11500000, guid: c41b030dcd806ad46b96e45d8d8f926e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 5883564750175140607, guid: e940ec4cc8a840e4cb9b4624c9b74ffe,
     type: 3}
   enemyPrefab: {fileID: 5092842508931278513, guid: 1be59330c789dd34a93d69cc7e229862,
+    type: 3}
+  objectivePrefab: {fileID: 3023074323992538525, guid: 9b5abb3f25a242c4fa70086673425884,
     type: 3}
   terrainMesh: {fileID: 2534964839176971238, guid: 31a70d72e200c97458d22472bcf9dd48,
     type: 3}

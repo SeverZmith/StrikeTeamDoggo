@@ -35,6 +35,8 @@ public class Hex
     public List<Hex> Neighbors = new List<Hex>();
     public GameObject HexObject { get; set; }
 
+    public int HexDistanceToObjective = 0; // TEST PATHFINDING
+
     // TODO: change to enum
     public int tileTypeIndex = -1; // -1: undefined, 0: terrain, 1: grass
 
@@ -143,9 +145,4 @@ public class Hex
     {
         Neighbors.Add(neighbor);
     }
-
-    //public void SetHexObj(GameObject hexObj) // TODO: verify remove
-    //{
-    //    HexObj = hexObj;
-    //}
 }

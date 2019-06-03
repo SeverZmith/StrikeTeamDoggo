@@ -10,12 +10,15 @@ public class Hexmap : MonoBehaviour
     void Start()
     {
         GenerateTilemap();
-        flowField(HexList[Random.Range(0, HexList.Count)]);
-        //flowField(GetHexAtCoord(8, 8));
+        //flowField(HexList[Random.Range(0, HexList.Count)]);
+        flowField(GetHexAtCoord(8, 8));
+
+        // For testing objective spawning
+        SpawnObjectiveAtCoord(objectivePrefab, 8, 8);
 
         // For testing unit spawning
-        Unit unit = new Unit();
-        SpawnUnitAtCoord(unit, enemyPrefab, 8, 8);
+        //SpawnUnitAtCoord(enemyPrefab, 8, 8);
+        SpawnUnitAtHex(enemyPrefab, SpawnPoints[0]);
     }
 
     void Update() // TESTING (TODO: remove)
@@ -50,7 +53,7 @@ public class Hexmap : MonoBehaviour
 
     public GameObject hexPrefab = null; // Prefab
     public GameObject enemyPrefab = null;
-    //public Material[] hexMats = null;
+    public GameObject objectivePrefab = null;
     public Mesh terrainMesh = null; // Mats & Meshes
     public Mesh grassMesh = null;
     public Material terrainMat = null;
@@ -100,9 +103,8 @@ public class Hexmap : MonoBehaviour
 
                 dictHexToGameObj[hex] = hexObj;
                 hex.HexObject = hexObj;
-                //hex.SetHexObj(hexObj); // TODO: verify remove
 
-                // Shows hexes' coordinates relative to center hex
+                // Shows hexes' position in hexes 2d array
                 hexObj.GetComponentInChildren<TextMesh>().text = string.Format("({0}, {1})", xIndex, yIndex);
 
                 MeshRenderer meshRenderer = hexObj.GetComponentInChildren<MeshRenderer>();
@@ -111,7 +113,6 @@ public class Hexmap : MonoBehaviour
                 HexList.Add(hex);
 
                 // Set Spawnpoints
-
                 if ((hex.q == hexagonMapRadius / 2 && (hex.r == -hexagonMapRadius || hex.r == hexagonMapRadius / 2))
                     || (hex.q == -hexagonMapRadius / 2 && (hex.r == hexagonMapRadius || hex.r == -hexagonMapRadius / 2))
                     || (hex.q == hexagonMapRadius && hex.r == -hexagonMapRadius / 2)
@@ -180,7 +181,7 @@ public class Hexmap : MonoBehaviour
         return hexesList.ToArray();
     }
 
-    public void SpawnUnitAtCoord(Unit unitType, GameObject unitPrefab, int q, int r)
+    public void SpawnUnitAtCoord(GameObject unitPrefab, int q, int r)
     {
         if (units == null)
         {
@@ -189,16 +190,40 @@ public class Hexmap : MonoBehaviour
         }
 
         Hex hex = GetHexAtCoord(q, r);
-        //Debug.Log(hex); // TODO: fix bug.. Hex is null because Hexes[,] isn't instantiated.
-        // need to figure out how to initialize Hexes[,] as each Hex is instantiated.
-        // see GenerateTilemap_old method (commented)
         GameObject hexObj = dictHexToGameObj[hex];
-        unitType.SetOccupiedHex(hex);
         GameObject unitObj = Instantiate(unitPrefab, hexObj.transform.position, Quaternion.identity, hexObj.transform);
 
-        units.Add(unitType);
-        // dictUnitToGameObj[unitType] = unitObj;
-        dictUnitToGameObj.Add(unitType, unitObj);
+        Unit unit = unitObj.GetComponentInChildren<Unit>();
+        unit.SetOccupiedHex(hex);
+
+        units.Add(unit);
+        dictUnitToGameObj[unit] = unitObj;
+    }
+
+    public void SpawnObjectiveAtCoord(GameObject objectivePrefab, int q, int r)
+    {
+        Hex hex = GetHexAtCoord(q, r);
+        GameObject hexObj = dictHexToGameObj[hex];
+        Vector3 spawnPosition = hexObj.transform.position + new Vector3(0, 0.7f, 0);
+        GameObject objectiveObj = Instantiate(objectivePrefab, spawnPosition, Quaternion.identity, hexObj.transform);
+    }
+
+    public void SpawnUnitAtHex(GameObject unitPrefab, Hex hex)
+    {
+        if (units == null)
+        {
+            units = new List<Unit>();
+            dictUnitToGameObj = new Dictionary<Unit, GameObject>();
+        }
+
+        GameObject hexObj = dictHexToGameObj[hex];
+        GameObject unitObj = Instantiate(unitPrefab, hexObj.transform.position, Quaternion.identity, hexObj.transform);
+
+        Unit unit = unitObj.GetComponentInChildren<Unit>();
+        unit.SetOccupiedHex(hex);
+
+        units.Add(unit);
+        dictUnitToGameObj[unit] = unitObj;
     }
 
     void flowField(Hex goal)
@@ -231,6 +256,11 @@ public class Hexmap : MonoBehaviour
                         nextGroup.Add(neighbor);
                         curDistance = new Distance(neighbor, frontier);
                         distance.Add(curDistance);
+
+                        // TEST PATHFINDING
+                        neighbor.HexDistanceToObjective = curDistance.dist;
+                        // TEST PATHFINDING
+
                         queue.Remove(neighbor);
                     }
                 }
