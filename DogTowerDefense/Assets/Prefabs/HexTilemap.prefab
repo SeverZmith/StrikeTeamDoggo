@@ -45,9 +45,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 5883564750175140607, guid: e940ec4cc8a840e4cb9b4624c9b74ffe,
     type: 3}
-  enemyPrefab: {fileID: 5092842508931278513, guid: 1be59330c789dd34a93d69cc7e229862,
-    type: 3}
+  wallPrefab: {fileID: 0}
   objectivePrefab: {fileID: 3023074323992538525, guid: 9b5abb3f25a242c4fa70086673425884,
+    type: 3}
+  unitSpawnerPrefab: {fileID: 1514454374116230840, guid: f8502cf67eb7a76469d0b71ba91c6e92,
     type: 3}
   terrainMesh: {fileID: 2534964839176971238, guid: 31a70d72e200c97458d22472bcf9dd48,
     type: 3}
@@ -55,4 +56,6 @@ MonoBehaviour:
     type: 3}
   terrainMat: {fileID: 2100000, guid: d96297edfa7902a4f950f19c76d7a9f2, type: 2}
   grassMat: {fileID: 2100000, guid: c44afa94ed77048418c738d1b4baf5bc, type: 2}
+  ObjectiveXIndex: 8
+  ObjectiveYIndex: 8
   hexagonMapRadius: 8

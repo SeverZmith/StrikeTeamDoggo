@@ -15,8 +15,12 @@ public class Unit : MonoBehaviour
 
     void Update()
     {
-        transform.position = Vector3.SmoothDamp(transform.position, nextPosition, ref velocity, 0.4f);
+        transform.position = Vector3.SmoothDamp(transform.position, nextPosition, ref velocity, 1f);
         CalculatePath(OccupiedHex);
+        if (Vector3.Distance(transform.position, nextPosition) <= OccupiedHex.radius * 2)
+        {
+            TriggerMovement();
+        }
     }
 
 
@@ -32,6 +36,7 @@ public class Unit : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private List<Hex> pathToGoal = null;
     private Objective currentObjective = null;
+    private bool reachedDestination = false;
 
 
     /******************
@@ -56,11 +61,6 @@ public class Unit : MonoBehaviour
 
     public void TriggerMovement()
     {
-        Debug.Log("Moving");
-
-        //Hex prevHex = OccupiedHex;
-        //Hex nextHex = OccupiedHex.Neighbors[0];
-
         if (pathToGoal.Count > 0)
         {
             Hex nextHex = pathToGoal[0];
@@ -71,8 +71,6 @@ public class Unit : MonoBehaviour
 
             OccupiedHex = nextHex;
         }
-
-        //transform.position = nextHex.GetWorldPosition();
     }
 
     public void CalculatePath(Hex startingHex)
