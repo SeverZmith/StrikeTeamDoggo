@@ -277,6 +277,11 @@ public class Hexmap : MonoBehaviour
                 currentGroup.Add(hex);
             }
             nextGroup.Clear();
+
+            if (currentGroup.Count == 0) // clears queue of unreachable tiles
+            {
+                queue.Clear();
+            }
         }
         foreach (Distance hexDist in distance)
         {
