@@ -23,8 +23,6 @@ public class Main : MonoBehaviour
         StartGameState(true);
         EndGameState(false);
         UpdateScore(5);
-
-
     }
 
     private void Update()
@@ -38,21 +36,19 @@ public class Main : MonoBehaviour
     public void UpdateScore(int value) // pass an incremental value to this to up score
     {
         scoreTracker += value;
-        //string stringScore = scoreTracker.ToString().PadLeft(7, '0');
+
         scoreText.text = "Score: " + scoreTracker.ToString().PadLeft(7, '0');
     }
 
     // Game functions
     public void StartGame()
     {
-        // should start game time
         StartGameState(false);
         Time.timeScale = 1;
     }
 
     public void RestartGame()
     {
-        // should stop game time
         EndGameState(false);
         Time.timeScale = 1;
         scoreTracker = 0;
