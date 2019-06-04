@@ -28,7 +28,7 @@ public class Main : MonoBehaviour
     private void Update()
     {
         gameTimer += Time.deltaTime;
-        timerText.text = gameTimer.ToString();
+        timerText.text = gameTimer.ToString("00.0");
     }
 
     // Public Functions game functions for buttons and interactions
@@ -36,7 +36,6 @@ public class Main : MonoBehaviour
     public void UpdateScore(int value) // pass an incremental value to this to up score
     {
         scoreTracker += value;
-
         scoreText.text = "Score: " + scoreTracker.ToString().PadLeft(7, '0');
     }
 
