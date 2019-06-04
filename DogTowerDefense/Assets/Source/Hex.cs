@@ -34,6 +34,7 @@ public class Hex
     public readonly float radius = 0;
     public List<Hex> Neighbors = new List<Hex>();
     public GameObject HexObject { get; set; }
+    public bool IsHexEmpty = true;
 
     public int HexDistanceToObjective = 0; // TEST PATHFINDING
 

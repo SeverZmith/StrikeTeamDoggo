@@ -5,6 +5,7 @@ using UnityEngine;
 public class Mouse : MonoBehaviour
 {
     [SerializeField] Camera cam;
+    [SerializeField] Hexmap hexmap;
     [SerializeField] LayerMask hexLayer;
     public GameObject SelectedHex = null;
     GameObject previousHex = null;
@@ -20,15 +21,18 @@ public class Mouse : MonoBehaviour
     void Update()
     {
         HexMouse();
-        
+
         if (Input.GetMouseButtonDown(0) && SelectedHex)
         {
             SelectedHex.GetComponent<Renderer>().material.color = Color.black;
+            //Debug.Log("Mouse Clicked");
+            hexmap.ClickOnHex(SelectedHex.transform.parent.gameObject);
         }
         if (Input.GetMouseButtonUp(0) && SelectedHex)
         {
             SelectedHex.GetComponent<Renderer>().material.color = Color.red;
         }
+
     }
 
     void HexMouse()

@@ -53,6 +53,7 @@ public class Hexmap : MonoBehaviour
 
     public GameObject hexPrefab = null; // Prefab
     public GameObject enemyPrefab = null;
+    public GameObject wallPrefab = null;
     public GameObject objectivePrefab = null;
     public Mesh terrainMesh = null; // Mats & Meshes
     public Mesh grassMesh = null;
@@ -63,7 +64,8 @@ public class Hexmap : MonoBehaviour
     //private int hexRows = 30;
     //private int hexCols = 60;
     private Hex[,] hexes = null;
-    private Dictionary<Hex, GameObject> dictHexToGameObj = null;
+    private Dictionary<Hex, GameObject> dictHexToGameObj = new Dictionary<Hex, GameObject>();
+    private Dictionary<GameObject, Hex> dictGameObjToHex = new Dictionary<GameObject, Hex>();
     private List<Unit> units = null;
     private Dictionary<Unit, GameObject> dictUnitToGameObj = null;
     List<Hex> SpawnPoints = new List<Hex>();
@@ -102,6 +104,7 @@ public class Hexmap : MonoBehaviour
                 GameObject hexObj = Instantiate(hexPrefab, hex.GetWorldPosition(), Quaternion.identity, this.transform);
 
                 dictHexToGameObj[hex] = hexObj;
+                dictGameObjToHex[hexObj] = hex;
                 hex.HexObject = hexObj;
 
                 // Shows hexes' position in hexes 2d array
@@ -233,7 +236,10 @@ public class Hexmap : MonoBehaviour
         List<Hex> queue = new List<Hex>();
         foreach (Hex hex in HexList)
         {
-            queue.Add(hex);
+            if (hex.IsHexEmpty)  // removes obstacles from queue
+                queue.Add(hex);
+            else
+                hex.HexDistanceToObjective = 999;
         }
         List<Distance> distance = new List<Distance>();
         Distance curDistance = new Distance(goal, frontier);
@@ -275,6 +281,48 @@ public class Hexmap : MonoBehaviour
         foreach (Distance hexDist in distance)
         {
             hexDist.hexagon.HexObject.GetComponentInChildren<TextMesh>().text += string.Format("\n{0}", hexDist.dist);
+        }
+    }
+
+    public void ClickOnHex(GameObject hexGameObj)
+    {
+        Hex hex = dictGameObjToHex[hexGameObj];
+        Debug.Log("Hex Clicked: " + hex.q + "," + hex.r + "," + hex.s);
+        AddWall(hex); // temp for testing
+    }
+
+    void AddWall(Hex hex)
+    {
+        Quaternion wallRotation = new Quaternion();
+        if (hex.IsHexEmpty)
+        {
+            if (hex.q == 0)
+            {
+                wallRotation = Quaternion.Euler(0, 30, 0);
+            }
+            else if (hex.r == 0)
+            {
+                wallRotation = Quaternion.Euler(0, 90, 0);
+            }
+            else if (hex.s == 0)
+            {
+                wallRotation = Quaternion.Euler(0, 150, 0);
+            }
+            else if ((hex.q > 0 && hex.r < 0 && hex.s > 0) || (hex.q < 0 && hex.r > 0 && hex.s < 0)) // flat
+            {
+                wallRotation = Quaternion.Euler(0, 0, 0);
+            }
+            else if ((hex.q < 0 && hex.r > 0 && hex.s > 0) || (hex.q > 0 && hex.r < 0 && hex.s < 0)) // up left, down right
+            {
+                wallRotation = Quaternion.Euler(0, 120, 0);
+            }
+            else if ((hex.q > 0 && hex.r > 0 && hex.s < 0) || (hex.q < 0 && hex.r < 0 && hex.s > 0)) // up right, down left
+            {
+                wallRotation = Quaternion.Euler(0, 60, 0);
+            }
+            Instantiate(wallPrefab, hex.HexObject.transform.position, wallRotation);
+            hex.IsHexEmpty = false;
+            flowField(GetHexAtCoord(8, 8));
         }
     }
 
