@@ -14,10 +14,15 @@ public class Main : MonoBehaviour
     [SerializeField] Text scoreText;
     [SerializeField] Texture2D sprayCursor;
     [SerializeField] Texture2D wallCursor;
+    [SerializeField] GameObject bone1;
+    [SerializeField] GameObject bone2;
+    [SerializeField] GameObject bone3;
+    [SerializeField] Text healthText;
 
 
     float gameTimer = 0;
-    int scoreTracker = 0;
+    int scoreTracker = 99;
+    int healthTracker = 0;
     GameObject activeIconElement = null;
     bool isActiveIcon = false;
 
@@ -34,11 +39,7 @@ public class Main : MonoBehaviour
     {
         gameTimer += Time.deltaTime;
         timerText.text = gameTimer.ToString("00.0");
-        if (Input.GetMouseButtonDown(0) && isActiveIcon == true)
-        {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            isActiveIcon = false;
-        }
+
     }
 
     // Public Functions game functions for buttons and interactions
@@ -47,6 +48,26 @@ public class Main : MonoBehaviour
     {
         scoreTracker += value;
         scoreText.text = "Score: " + scoreTracker.ToString().PadLeft(7, '0');
+    }
+
+    public void UpdateHealth(int value) // pass an incremental value to this to up score
+    {
+        healthTracker -= value;
+        healthText.text = "Health: " + healthTracker.ToString().PadLeft(2, '0');
+        if (healthTracker < 1)
+        {
+            EndGame();
+            bone1.SetActive(false);
+        }
+        if (healthTracker < 66)
+        {
+            bone3.SetActive(false);
+        }
+        if (healthTracker < 33)
+        {
+            bone2.SetActive(false);
+        }
+
     }
 
     // Game functions
@@ -82,6 +103,10 @@ public class Main : MonoBehaviour
             Cursor.SetCursor(wallCursor, Vector2.zero, CursorMode.Auto);
             isActiveIcon = true;
         }
+    }
+    public void clearItem()
+    {
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
     // Functions for handleing game logic
     private void StartGameState(bool isActive) // Handles Start game screen visibility
