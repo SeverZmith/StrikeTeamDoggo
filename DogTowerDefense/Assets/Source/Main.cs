@@ -22,8 +22,8 @@ public class Main : MonoBehaviour
 
 
     float gameTimer = 0;
-    int scoreTracker = 500;
-    int healthTracker = 0;
+    int scoreTracker = 0;
+    int healthTracker = 150;
     GameObject activeIconElement = null;
     bool isActiveIcon = false;
     private Hexmap hexmap;
@@ -33,6 +33,7 @@ public class Main : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 0;
+        UpdateHealth(0);
         StartGameState(true);
         EndGameState(false);
         hexmap = hexmapObj.GetComponentInChildren<Hexmap>();
@@ -62,20 +63,20 @@ public class Main : MonoBehaviour
             EndGame();
             bone1.SetActive(false);
         }
-        if (healthTracker < 66)
-        {
-            bone3.SetActive(false);
-        }
-        if (healthTracker < 33)
+        if (healthTracker < 50)
         {
             bone2.SetActive(false);
         }
-
+        if (healthTracker < 100)
+        {
+            bone3.SetActive(false);
+        }
     }
 
     // Game functions
     public void StartGame()
     {
+        SFXController.PlaySound("StartButton");
         StartGameState(false);
         Time.timeScale = 1;
     }

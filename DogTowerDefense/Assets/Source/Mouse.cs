@@ -24,6 +24,7 @@ public class Mouse : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && SelectedHex)
         {
+            SFXController.PlaySound("Placing");
             hexmap.ClickOnHex(SelectedHex.transform.parent.gameObject);
             SelectedHex.GetComponent<Renderer>().material.color = Color.red;
         }
