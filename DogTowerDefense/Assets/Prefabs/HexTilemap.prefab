@@ -45,10 +45,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 5883564750175140607, guid: e940ec4cc8a840e4cb9b4624c9b74ffe,
     type: 3}
-  wallPrefab: {fileID: 0}
-  towerPrefab: {fileID: 4304652869195679147, guid: 3d719d88c1c375b4682c646ec6f1dcfe,
+  wallPrefab: {fileID: 3093435824662291981, guid: 0cfd7e34d25108e439de624fa67a81ff,
     type: 3}
-  objectivePrefab: {fileID: 3023074323992538525, guid: 9b5abb3f25a242c4fa70086673425884,
+  towerPrefab: {fileID: 4776808239464326779, guid: acdfee7d6ffa20745b3817bb6847a366,
+    type: 3}
+  objectivePrefab: {fileID: 4800788865712538336, guid: af255787d5ac1ae498f5814b70f8cb05,
     type: 3}
   unitSpawnerPrefab: {fileID: 1514454374116230840, guid: f8502cf67eb7a76469d0b71ba91c6e92,
     type: 3}

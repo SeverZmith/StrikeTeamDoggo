@@ -53,7 +53,7 @@ public class Hexmap : MonoBehaviour
     }
 
     public GameObject hexPrefab = null; // Prefab
-    public GameObject wallPrefab = null;
+    public Wall wallPrefab = null;
     public GameObject towerPrefab = null;
     public GameObject objectivePrefab = null;
     public GameObject unitSpawnerPrefab = null;
@@ -67,7 +67,7 @@ public class Hexmap : MonoBehaviour
 
     private List<Hex> HexList = new List<Hex>();
     private Hex[,] hexes = null;
-    private Dictionary<GameObject, Hex> dictGameObjToHex = new Dictionary<GameObject, Hex>();
+    public Dictionary<GameObject, Hex> dictGameObjToHex = new Dictionary<GameObject, Hex>();
     private List<Hex> SpawnPoints = new List<Hex>();
 
     private int buildingSelection = 1;
@@ -190,7 +190,7 @@ public class Hexmap : MonoBehaviour
     {
         Hex hex = GetHexAtIndex(xIndex, yIndex);
         GameObject hexObj = DictHexToGameObj[hex];
-        Vector3 spawnPosition = hexObj.transform.position + new Vector3(0, 0.7f, 0);
+        Vector3 spawnPosition = hexObj.transform.position + new Vector3(0, 1.2f, 0);
         GameObject objectiveObj = Instantiate(objectivePrefab, spawnPosition, Quaternion.identity, hexObj.transform);
     }
 
@@ -217,7 +217,7 @@ public class Hexmap : MonoBehaviour
     public void ClickOnHex(GameObject hexGameObj)
     {
         Hex hex = dictGameObjToHex[hexGameObj];
-        Debug.Log("Hex Clicked: " + hex.q + "," + hex.r + "," + hex.s);
+        // Debug.Log("Hex Clicked: " + hex.q + "," + hex.r + "," + hex.s);
 
         // If the hex being clicked on is occupied by the objective, do nothing
         if (hex.GetWorldPosition() != GetHexAtIndex(ObjectiveXIndex, ObjectiveYIndex).GetWorldPosition())
@@ -248,7 +248,7 @@ public class Hexmap : MonoBehaviour
     /*******************
      * Private Methods *
      *******************/
-    private void flowField(Hex goal)
+    public void flowField(Hex goal)
     {
         int frontier = 0;
 
@@ -338,9 +338,12 @@ public class Hexmap : MonoBehaviour
                 wallRotation = Quaternion.Euler(0, 60, 0);
             }
             GameObject hexObj = DictHexToGameObj[hex];
-            Instantiate(wallPrefab, hexObj.transform.position, wallRotation, hexObj.transform);
+            Vector3 wallOffset = new Vector3(0, 0.3f, 0);
+            Wall wall = Instantiate(wallPrefab, hex.HexObject.transform.position + wallOffset, wallRotation);
             hex.IsHexEmpty = false;
             flowField(GetHexAtIndex(ObjectiveXIndex, ObjectiveYIndex));
+            wall.hex = hex;
+            wall.hexMap = this;
         }
     }
 

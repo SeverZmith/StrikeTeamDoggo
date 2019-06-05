@@ -24,12 +24,7 @@ public class Mouse : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && SelectedHex)
         {
-            SelectedHex.GetComponent<Renderer>().material.color = Color.black;
-            //Debug.Log("Mouse Clicked");
             hexmap.ClickOnHex(SelectedHex.transform.parent.gameObject);
-        }
-        if (Input.GetMouseButtonUp(0) && SelectedHex)
-        {
             SelectedHex.GetComponent<Renderer>().material.color = Color.red;
         }
 
@@ -58,8 +53,16 @@ public class Mouse : MonoBehaviour
         }
         if (SelectedHex != previousHex && SelectedHex != null)
         {
+            Hex curHex = hexmap.dictGameObjToHex[SelectedHex.transform.parent.gameObject];
             previousColor = SelectedHex.GetComponent<Renderer>().material.color;
-            SelectedHex.GetComponent<Renderer>().material.color = Color.red;
+            if (curHex.IsHexEmpty)
+            {
+                SelectedHex.GetComponent<Renderer>().material.color = Color.green;
+            }
+            else
+            {
+                SelectedHex.GetComponent<Renderer>().material.color = Color.red;
+            }
         }
     }
 }

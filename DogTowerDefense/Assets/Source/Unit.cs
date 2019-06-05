@@ -16,6 +16,7 @@ public class Unit : MonoBehaviour
     void Update()
     {
         transform.position = Vector3.SmoothDamp(transform.position, nextPosition, ref velocity, 1f);
+        transform.LookAt(nextPosition);
         CalculatePath(OccupiedHex);
         if (Vector3.Distance(transform.position, nextPosition) <= OccupiedHex.radius * 2)
         {
