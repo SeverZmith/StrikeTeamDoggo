@@ -688,6 +688,10 @@ MonoBehaviour:
   scoreText: {fileID: 621997462}
   sprayCursor: {fileID: 2800000, guid: 6c0a13ea15b1f4dfda3180092fb366e0, type: 3}
   wallCursor: {fileID: 2800000, guid: 262267eaf503a4f7ba1cbbbe916ccb7b, type: 3}
+  bone1: {fileID: 254258614}
+  bone2: {fileID: 424748392}
+  bone3: {fileID: 815237724}
+  healthText: {fileID: 119483430}
 --- !u!114 &311131449
 MonoBehaviour:
   m_ObjectHideFlags: 0
