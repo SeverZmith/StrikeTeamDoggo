@@ -22,7 +22,7 @@ public class Main : MonoBehaviour
 
 
     float gameTimer = 0;
-    int scoreTracker = 99;
+    int scoreTracker = 500;
     int healthTracker = 0;
     GameObject activeIconElement = null;
     bool isActiveIcon = false;
@@ -56,7 +56,7 @@ public class Main : MonoBehaviour
     public void UpdateHealth(int value) // pass an incremental value to this to up score
     {
         healthTracker -= value;
-        healthText.text = "Health: " + healthTracker.ToString().PadLeft(2, '0');
+        healthText.text = "Health: " + healthTracker.ToString().PadLeft(3, '0');
         if (healthTracker < 1)
         {
             EndGame();
