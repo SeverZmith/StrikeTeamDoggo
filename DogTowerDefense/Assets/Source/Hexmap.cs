@@ -24,6 +24,18 @@ public class Hexmap : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SetBuildingSelection(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SetBuildingSelection(2);
+        }
+    }
+
 
     /********************
      * Member Variables *
@@ -42,6 +54,7 @@ public class Hexmap : MonoBehaviour
 
     public GameObject hexPrefab = null; // Prefab
     public GameObject wallPrefab = null;
+    public GameObject towerPrefab = null;
     public GameObject objectivePrefab = null;
     public GameObject unitSpawnerPrefab = null;
     public Mesh terrainMesh = null; // Mats & Meshes
@@ -55,7 +68,9 @@ public class Hexmap : MonoBehaviour
     private List<Hex> HexList = new List<Hex>();
     private Hex[,] hexes = null;
     private Dictionary<GameObject, Hex> dictGameObjToHex = new Dictionary<GameObject, Hex>();
-    List<Hex> SpawnPoints = new List<Hex>();
+    private List<Hex> SpawnPoints = new List<Hex>();
+
+    private int buildingSelection = 1;
 
     [SerializeField] private int hexagonMapRadius = 8;
 
@@ -194,7 +209,46 @@ public class Hexmap : MonoBehaviour
         unitSpawnerObj.GetComponentInChildren<UnitSpawner>().Hexmap = this;
     }
 
-    void flowField(Hex goal)
+    public List<Hex> GetSpawnPoints()
+    {
+        return SpawnPoints;
+    }
+
+    public void ClickOnHex(GameObject hexGameObj)
+    {
+        Hex hex = dictGameObjToHex[hexGameObj];
+        Debug.Log("Hex Clicked: " + hex.q + "," + hex.r + "," + hex.s);
+
+        // If the hex being clicked on is occupied by the objective, do nothing
+        if (hex.GetWorldPosition() != GetHexAtIndex(ObjectiveXIndex, ObjectiveYIndex).GetWorldPosition())
+        {
+            // Build
+            switch (buildingSelection)
+            {
+                case 1:
+                    AddWall(hex);
+                    break;
+
+                case 2:
+                    AddTower(hex);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void SetBuildingSelection(int selection)
+    {
+        buildingSelection = selection;
+    }
+
+
+    /*******************
+     * Private Methods *
+     *******************/
+    private void flowField(Hex goal)
     {
         int frontier = 0;
 
@@ -250,18 +304,11 @@ public class Hexmap : MonoBehaviour
         }
         foreach (Distance hexDist in distance)
         {
-            hexDist.hexagon.HexObject.GetComponentInChildren<TextMesh>().text = string.Format("{0}", hexDist.dist);
+            //hexDist.hexagon.HexObject.GetComponentInChildren<TextMesh>().text = string.Format("{0}", hexDist.dist);
         }
     }
 
-    public void ClickOnHex(GameObject hexGameObj)
-    {
-        Hex hex = dictGameObjToHex[hexGameObj];
-        Debug.Log("Hex Clicked: " + hex.q + "," + hex.r + "," + hex.s);
-        AddWall(hex); // temp for testing
-    }
-
-    void AddWall(Hex hex)
+    private void AddWall(Hex hex)
     {
         Quaternion wallRotation = new Quaternion();
         if (hex.IsHexEmpty)
@@ -290,15 +337,23 @@ public class Hexmap : MonoBehaviour
             {
                 wallRotation = Quaternion.Euler(0, 60, 0);
             }
-            Instantiate(wallPrefab, hex.HexObject.transform.position, wallRotation);
+            GameObject hexObj = DictHexToGameObj[hex];
+            Instantiate(wallPrefab, hexObj.transform.position, wallRotation, hexObj.transform);
             hex.IsHexEmpty = false;
-            flowField(GetHexAtIndex(8, 8));
+            flowField(GetHexAtIndex(ObjectiveXIndex, ObjectiveYIndex));
         }
     }
 
-    public List<Hex> GetSpawnPoints()
+    private void AddTower(Hex hex)
     {
-        return SpawnPoints;
+        if (hex.IsHexEmpty)
+        {
+            GameObject hexObj = DictHexToGameObj[hex];
+            Vector3 spawnPosition = hexObj.transform.position + new Vector3(0, 0.7f, 0);
+            Instantiate(towerPrefab, hexObj.transform.position, Quaternion.identity, hexObj.transform);
+            hex.IsHexEmpty = false;
+            flowField(GetHexAtIndex(ObjectiveXIndex, ObjectiveYIndex));
+        }
     }
 
 

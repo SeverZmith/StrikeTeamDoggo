@@ -9,21 +9,37 @@ public class UnitSpawner : MonoBehaviour
      *******************/
     void Update()
     {
-        if (!spawningUnit && !ceaseSpawning)
+        if (Input.GetKeyDown(KeyCode.Space)) // FOR SPAWNING TEST
         {
-            StartCoroutine(BeginSpawnCycle(3f));
-        }
-
-        if (Input.GetKey(KeyCode.Space)) // FOR TESTING WAVES
-        {
-            if (ceaseSpawning)
+            if (!ceaseSpawning)
             {
-                ceaseSpawning = false;
+                EndSpawnCycle();
             }
             else
             {
-                ceaseSpawning = true;
+                StartSpawnCycle(2f);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha6)) // FOR WAVE SPAWNING TEST
+        {
+            SpawnWave(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            SpawnWave(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            SpawnWave(3);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            SpawnWave(4);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SpawnWave(5);
         }
     }
 
@@ -36,8 +52,8 @@ public class UnitSpawner : MonoBehaviour
 
     private List<Unit> units = null;
     private Dictionary<Unit, GameObject> dictUnitToGameObj = null;
-    private bool spawningUnit = false;
-    private bool ceaseSpawning = false;
+    private bool spawningWave = false;
+    private bool ceaseSpawning = true;
 
 
     /******************
@@ -61,19 +77,42 @@ public class UnitSpawner : MonoBehaviour
         dictUnitToGameObj[unit] = unitObj;
     }
 
+    public void StartSpawnCycle(float frequency)
+    {
+        ceaseSpawning = false;
+        InvokeRepeating("TriggerSpawners", 0, frequency);
+    }
+
+    public void EndSpawnCycle()
+    {
+        ceaseSpawning = true;
+        CancelInvoke();
+    }
+
+    public void SpawnWave(int unitsInWave)
+    {
+        StartCoroutine(SpawnSetOfUnits(unitsInWave));
+    }
+
 
     /*******************
      * Private Methods *
      *******************/
-    private IEnumerator BeginSpawnCycle(float spawnDelay)
+    private void TriggerSpawners()
     {
-        spawningUnit = true;
         List<Hex> spawnPoints = Hexmap.GetSpawnPoints();
         for (int i = 0; i < spawnPoints.Count; i++)
         {
             SpawnUnitAtHex(spawnPoints[i]);
         }
-        yield return new WaitForSeconds(spawnDelay);
-        spawningUnit = false;
+    }
+
+    private IEnumerator SpawnSetOfUnits(int numUnits)
+    {
+        spawningWave = true;
+        InvokeRepeating("TriggerSpawners", 0, 1f);
+        yield return new WaitForSeconds(numUnits - 1);
+        CancelInvoke();
+        spawningWave = false;
     }
 }

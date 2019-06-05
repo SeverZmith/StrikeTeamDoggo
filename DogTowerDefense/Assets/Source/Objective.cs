@@ -6,6 +6,10 @@ public class Objective : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        Destroy(other.gameObject);
+        if (other.gameObject.tag == "Enemy")
+        {
+            // TODO: Deduct from lives
+            Destroy(other.gameObject);
+        }
     }
 }

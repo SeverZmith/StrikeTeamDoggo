@@ -23,13 +23,23 @@ public class Unit : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "Projectile")
+        {
+            Projectile bullet = other.GetComponentInParent<Projectile>();
+            TakeDamage(bullet.Damage);
+            Destroy(other.gameObject);
+        }
+    }
+
 
     /********************
      * Member Variables *
      ********************/
     public Hex OccupiedHex { get; protected set; }
     public string Name = "Unit-Name";
-    public int Health = 100;
+    public float Health = 10f;
 
     private Vector3 prevPosition = Vector3.zero;
     private Vector3 nextPosition = Vector3.zero;
@@ -85,4 +95,25 @@ public class Unit : MonoBehaviour
             }
         }
     }
+
+    public void TakeDamage(float amount)
+    {
+        if (Health - amount <= 0)
+        {
+            Death();
+        }
+        else
+        {
+            Health -= amount;
+        }
+    }
+
+    /*******************
+     * Private Methods *
+     *******************/
+    private void Death()
+    {
+        Destroy(gameObject);
+    }
+
 }
