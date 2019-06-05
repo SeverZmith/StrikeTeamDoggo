@@ -65,12 +65,14 @@ public class Hexmap : MonoBehaviour
     public int ObjectiveXIndex = 0;
     public int ObjectiveYIndex = 0;
 
+    public GameObject main = null;
+
     private List<Hex> HexList = new List<Hex>();
     private Hex[,] hexes = null;
     public Dictionary<GameObject, Hex> dictGameObjToHex = new Dictionary<GameObject, Hex>();
     private List<Hex> SpawnPoints = new List<Hex>();
 
-    private int buildingSelection = 1;
+    private int buildingSelection = 0;
 
     [SerializeField] private int hexagonMapRadius = 8;
 

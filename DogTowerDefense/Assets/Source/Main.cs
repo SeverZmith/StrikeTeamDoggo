@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
     [SerializeField] GameObject endScreen;
     [SerializeField] GameObject startButton;
     [SerializeField] GameObject restartButton;
+    [SerializeField] GameObject hexmapObj;
 
     // updatable objects
     [SerializeField] Text timerText;
@@ -25,6 +26,7 @@ public class Main : MonoBehaviour
     int healthTracker = 0;
     GameObject activeIconElement = null;
     bool isActiveIcon = false;
+    private Hexmap hexmap;
 
 
     //Engine Functions
@@ -33,6 +35,7 @@ public class Main : MonoBehaviour
         Time.timeScale = 0;
         StartGameState(true);
         EndGameState(false);
+        hexmap = hexmapObj.GetComponentInChildren<Hexmap>();
     }
 
     private void Update()
@@ -97,16 +100,19 @@ public class Main : MonoBehaviour
         {
             Cursor.SetCursor(sprayCursor, Vector2.zero, CursorMode.Auto);
             isActiveIcon = true;
+            hexmap.SetBuildingSelection(2);
         }
         if (type.ToLower() == "wall")
         {
             Cursor.SetCursor(wallCursor, Vector2.zero, CursorMode.Auto);
             isActiveIcon = true;
+            hexmap.SetBuildingSelection(1);
         }
     }
     public void clearItem()
     {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        hexmap.SetBuildingSelection(0);
     }
     // Functions for handleing game logic
     private void StartGameState(bool isActive) // Handles Start game screen visibility

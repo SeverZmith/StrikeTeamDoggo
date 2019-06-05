@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -684,6 +684,7 @@ MonoBehaviour:
   endScreen: {fileID: 242589547}
   startButton: {fileID: 1571225345}
   restartButton: {fileID: 1092032991}
+  hexmapObj: {fileID: 1670796407}
   timerText: {fileID: 1563387431}
   scoreText: {fileID: 621997462}
   sprayCursor: {fileID: 2800000, guid: 6c0a13ea15b1f4dfda3180092fb366e0, type: 3}
@@ -1082,7 +1083,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 7911623070982820308}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1670796407}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c41b030dcd806ad46b96e45d8d8f926e, type: 3}
@@ -3527,6 +3528,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647121213}
   m_CullTransparentMesh: 0
+--- !u!1 &1670796407 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7911623070466270685, guid: fed684f492bd0034faff463a314a3e10,
+    type: 3}
+  m_PrefabInstance: {fileID: 7911623070982820308}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1697811317
 GameObject:
   m_ObjectHideFlags: 0
@@ -3851,6 +3858,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HexTilemap
       objectReference: {fileID: 0}
+    - target: {fileID: 1077564727742605909, guid: fed684f492bd0034faff463a314a3e10,
+        type: 3}
+      propertyPath: main
+      value: 
+      objectReference: {fileID: 311131447}
     - target: {fileID: 7911623070466270687, guid: fed684f492bd0034faff463a314a3e10,
         type: 3}
       propertyPath: m_LocalPosition.x
