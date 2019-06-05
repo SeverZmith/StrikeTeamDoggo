@@ -12,9 +12,15 @@ public class Main : MonoBehaviour
     // updatable objects
     [SerializeField] Text timerText;
     [SerializeField] Text scoreText;
+    [SerializeField] Texture2D sprayCursor;
+    [SerializeField] Texture2D wallCursor;
+
 
     float gameTimer = 0;
     int scoreTracker = 0;
+    GameObject activeIconElement = null;
+    bool isActiveIcon = false;
+
 
     //Engine Functions
     private void Start()
@@ -22,13 +28,17 @@ public class Main : MonoBehaviour
         Time.timeScale = 0;
         StartGameState(true);
         EndGameState(false);
-        UpdateScore(5);
     }
 
     private void Update()
     {
         gameTimer += Time.deltaTime;
         timerText.text = gameTimer.ToString("00.0");
+        if (Input.GetMouseButtonDown(0) && isActiveIcon == true)
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            isActiveIcon = false;
+        }
     }
 
     // Public Functions game functions for buttons and interactions
@@ -60,6 +70,19 @@ public class Main : MonoBehaviour
         EndGameState(true);
     }
 
+    public void selectItem(string type)
+    {
+        if (type.ToLower() == "spray")
+        {
+            Cursor.SetCursor(sprayCursor, Vector2.zero, CursorMode.Auto);
+            isActiveIcon = true;
+        }
+        if (type.ToLower() == "wall")
+        {
+            Cursor.SetCursor(wallCursor, Vector2.zero, CursorMode.Auto);
+            isActiveIcon = true;
+        }
+    }
     // Functions for handleing game logic
     private void StartGameState(bool isActive) // Handles Start game screen visibility
     {
