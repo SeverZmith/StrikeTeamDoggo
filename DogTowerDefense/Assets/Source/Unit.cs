@@ -114,6 +114,7 @@ public class Unit : MonoBehaviour
      *******************/
     private void Death()
     {
+        OccupiedHex.Hexmap.main.GetComponent<Main>().UpdateScore(1);
         Destroy(gameObject);
     }
 
